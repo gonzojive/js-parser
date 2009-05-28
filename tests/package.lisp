@@ -131,28 +131,5 @@
                 *genvar-counter*
                 ugly-print
 
-                ;; source-transformation-specific symbols
-                *cont-name*
-                *cont-id*
-                transform
-                cps
-                explicitize
-                shift-decls
-                uniquify
-                loop-canonicalize
-                in-local-scope
-                trampoline
-                runtime
-                shadow-values
-
-                ;; cps transformation symbols
-                find-free-variables
-                
-                ;; type-analysis symbols
-                type-analyze
-                compute-types
-                value-node
-                location-node
-                explicitly-terminated-p
                 ))
                 
