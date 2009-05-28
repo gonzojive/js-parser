@@ -288,13 +288,15 @@
                                             :start-anchor
                                             (:greedy-repetition 1 nil
                                              (:alternation
+					      ;; whitespace
                                               (:greedy-repetition 1 nil
                                                :whitespace-char-class)
+					      ;; single-line comment
                                               (:sequence
                                                "//"
                                                (:greedy-repetition 0 nil
                                                 (:inverted-char-class #\Newline))
-                                               #\Newline)
+                                               (:alternation #\Newline :end-anchor))
                                               (:sequence
                                                "/*"
                                                (:greedy-repetition 0 nil
