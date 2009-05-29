@@ -556,9 +556,9 @@ else
 suspend;")
 
 (deftest pretty-print/remove-handler/1 :notes pretty-print
-  (pretty-string (list (jw::make-remove-handler :handler foo-id
+  (pretty-string (list (js-parser::make-remove-handler :handler foo-id
                                                 :thunk-body (list (make-return-statement :arg (make-special-value :symbol :null))))
-                       (jw::make-suspend-statement)))
+                       (js-parser::make-suspend-statement)))
   "$removeHandler(foo, function()
 {
   return null;

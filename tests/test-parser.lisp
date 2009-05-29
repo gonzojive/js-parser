@@ -441,18 +441,21 @@
 
 (deftest parser/suspend-statement/1 :notes parser
   (test-parse "suspend;")
-  (#S(suspend-statement)))
+  (#S(identifier :name "suspend")))
 
+#+nil
 (deftest parser/resume-statement/1 :notes parser
   (test-parse "resume getContinuation();")
   (#S(resume-statement :target #S(fn-call :fn #S(identifier :name "getContinuation")))))
 
+#+nil
 (deftest parser/resume-statement/2 :notes parser
   (test-parse "resume foo.bar <- baz;")
   (#S(resume-statement :target #S(property-access :target #S(identifier :name "foo")
                                                   :field #S(string-literal :value "bar"))
                        :arg #S(identifier :name "baz"))))
 
+#+nil
 (deftest parser/resume-statement/3 :notes parser
   (test-parse "resume k <- 100;")
   (#S(resume-statement :target #S(identifier :name "k")
@@ -466,71 +469,71 @@
 
 (deftest parser/for/1 :notes parser
   (test-parse "for(;;) suspend;")
-  (#S(for :body #s(suspend-statement))))
+  (#S(for :body #S(identifier :name "suspend"))))
 
 (deftest parser/for/2 :notes parser
   (test-parse "for(x=0;;) suspend;")
   (#S(for :initializer #s(binary-operator :op-symbol :assign :left-arg #s(identifier :name "x") :right-arg #s(numeric-literal :value 0))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/3 :notes parser
   (test-parse "for(;true;) { suspend; }")
   (#S(for :condition #S(special-value :symbol :true)
-          :body #S(statement-block :statements (#S(suspend-statement))))))
+          :body #S(statement-block :statements (#S(identifier :name "suspend"))))))
 
 (deftest parser/for/4 :notes parser
   (test-parse "for(;;x++) suspend;")
   (#S(for :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/5 :notes parser
   (test-parse "for(x=0;true;) suspend;")
   (#S(for :initializer #s(binary-operator :op-symbol :assign :left-arg #s(identifier :name "x") :right-arg #s(numeric-literal :value 0))
           :condition #S(special-value :symbol :true)
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
   
 (deftest parser/for/6 :notes parser
   (test-parse "for(;true;x++) suspend;")
   (#S(for :condition #S(special-value :symbol :true)
           :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/7 :notes parser
   (test-parse "for(x=0;;x++) suspend;")
   (#S(for :initializer #s(binary-operator :op-symbol :assign :left-arg #s(identifier :name "x") :right-arg #s(numeric-literal :value 0))
           :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/8 :notes parser
   (test-parse "for(x=0;true;x++) suspend;")
   (#S(for :initializer #s(binary-operator :op-symbol :assign :left-arg #s(identifier :name "x") :right-arg #s(numeric-literal :value 0))
           :condition #S(special-value :symbol :true)
           :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/9 :notes parser
   (test-parse "for(var x = 0;;) suspend;")
   (#s(for :initializer #s(var-decl-statement :var-decls (#s(var-decl :name "x" :initializer #s(numeric-literal :value 0))))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/10 :notes parser
   (test-parse "for(var x = 0;true;) suspend;")
   (#s(for :initializer #s(var-decl-statement :var-decls (#s(var-decl :name "x" :initializer #s(numeric-literal :value 0))))
           :condition #S(special-value :symbol :true)
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/11 :notes parser
   (test-parse "for(var x = 0;;x++) suspend;")
   (#s(for :initializer #s(var-decl-statement :var-decls (#s(var-decl :name "x" :initializer #s(numeric-literal :value 0))))
           :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/for/12 :notes parser
   (test-parse "for(var x = 0;true;x++) suspend;")
   (#s(for :initializer #s(var-decl-statement :var-decls (#s(var-decl :name "x" :initializer #s(numeric-literal :value 0))))
           :condition #S(special-value :symbol :true)
           :step #s(unary-operator :op-symbol :post-incr :arg #s(identifier :name "x"))
-          :body #s(suspend-statement))))
+          :body #s(identifier :name "suspend"))))
 
 (deftest parser/array-literal/1 :notes parser
   (test-parse "x = [];")

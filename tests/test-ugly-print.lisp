@@ -56,8 +56,8 @@
 (deftest ugly-print/function-decl/5 :notes ugly-print
   (with-fresh-genvar
     (in-local-scope
-      (let ((jw::*pretty-mode* nil))
-        (jw::uglify-vars (test-parse "
+      (let ((js-parser::*pretty-mode* nil))
+        (js-parser::uglify-vars (test-parse "
           function recursiveCount(i, n)
           {
             if(i > n)
@@ -169,8 +169,8 @@
 
 (deftest ugly-print/pretty-variable/1 :notes ugly-print
   (with-fresh-genvar
-    (let ((jw::*pretty-mode* t))
-      (jw::uglify-vars (test-parse "
+    (let ((js-parser::*pretty-mode* t))
+      (js-parser::uglify-vars (test-parse "
         function fn(arg1, arg2)
         {
           function bar() { return 7; }

@@ -9,7 +9,7 @@
 ;;;; ======= System definition =====================================================================
 (asdf:defsystem js-parser-tests
     :version "0.1"
-    :author "James Wright <chumsley@gmail.com>, Greg Smolyn <greg@smolyn.org>"
+    :author "Red Daly <reddaly@gmail.com>"
     :licence "BSD License <http://www.opensource.org/licenses/bsd-license.php>"
     :serial t
     :components

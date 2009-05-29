@@ -31,18 +31,36 @@
 ;;; since transformation often moves source elements to different parts of the
 ;;; code while preserving their original position information).
 (defmethod transform ((xform (eql 'remove-positions)) (elm source-element))
+  (declare (optimize debug))
   (apply
    (get-constructor elm)
    (loop for slot in (structure-slots elm)
          collect (make-keyword slot)
-         collect (if (or (eq slot 'jw::start) (eq slot 'jw::end))
+         collect (if (or (eq slot 'js-parser::start) (eq slot 'js-parser::end))
                      nil
-                     (transform xform (slot-value elm slot))))))
+		     (let ((slot-value (slot-value elm slot)))
+		       (transform xform slot-value))))))
+
+(defmethod transform ((xform (eql 'remove-positions)) (elm string))
+  elm)
+
+(defmethod transform ((xform (eql 'remove-positions)) (elm cons))
+  (cons (transform xform (car elm))
+	(transform xform (cdr elm))))
+
+(defmethod transform ((xform (eql 'remove-positions)) (elm symbol))
+  elm)
+
+(defmethod transform ((xform (eql 'remove-positions)) (elm number))
+  elm)
+
+(defmethod transform ((xform (eql 'remove-positions)) (elm (eql nil)))
+  nil)
 
 (defmethod transform ((xform (eql 'remove-positions)) (elm object-literal))
   (make-object-literal
    :properties
-   (loop for (prop-name . prop-value) in (jw::object-literal-properties elm)
+   (loop for (prop-name . prop-value) in (js-parser::object-literal-properties elm)
          collect (cons
                   (transform xform prop-name)
                   (transform xform prop-value)))))
@@ -52,6 +70,8 @@
   (let ((elm (parse str)))
     (transform 'remove-positions elm)))
 
+;    (transform 'remove-positions (car elm))))
+
 ;;; The REMOVE-ADMINISTRATIVES transformation translates administrative
 ;;; source-elements (such as CONTINUATION-FUNCTIONs) to their non-administrative
 ;;; equivalents (eg FUNCTION-EXPRESSION).  This transformation is used by the
@@ -59,35 +79,35 @@
 ;;; the same as what would be parsed from their pretty-printed representation
 ;;; (so that we can write unit tests by providing JWACS code instead of ASTs).
 (defmethod transform ((xform (eql 'remove-administratives)) (elm thunk-function))
-  (make-function-expression :name (jw::function-expression-name elm)
-                            :parameters (jw::function-expression-parameters elm)
-                            :body (transform xform (jw::function-expression-body elm))))
+  (make-function-expression :name (js-parser::function-expression-name elm)
+                            :parameters (js-parser::function-expression-parameters elm)
+                            :body (transform xform (js-parser::function-expression-body elm))))
 
 (defmethod transform ((xform (eql 'remove-administratives)) (elm continuation-function))
-  (make-function-expression :name (jw::function-expression-name elm)
-                            :parameters (jw::function-expression-parameters elm)
-                            :body (transform xform (jw::function-expression-body elm))))
+  (make-function-expression :name (js-parser::function-expression-name elm)
+                            :parameters (js-parser::function-expression-parameters elm)
+                            :body (transform xform (js-parser::function-expression-body elm))))
 
 (defmethod transform ((xform (eql 'remove-administratives)) (elm continuation-call))
-  (make-fn-call :fn (transform xform (jw::fn-call-fn elm))
-                :args (transform xform (jw::fn-call-args elm))))
+  (make-fn-call :fn (transform xform (js-parser::fn-call-fn elm))
+                :args (transform xform (js-parser::fn-call-args elm))))
 
 (defmethod transform ((xform (eql 'remove-administratives)) (elm special-value))
-  (if (eq :arguments (jw::special-value-symbol elm))
-    (make-identifier :name jw::*arguments-name*)
+  (if (eq :arguments (js-parser::special-value-symbol elm))
+    (make-identifier :name js-parser::*arguments-name*)
     (call-next-method)))
 
 (defmethod transform ((xform (eql 'remove-administratives)) (elm add-handler))
   (make-fn-call :fn (make-identifier :name "$addHandler")
-                :args (list (transform xform (jw::add-handler-handler elm))
-                            (transform xform (jw::make-function-expression
-                                              :body (jw::add-handler-thunk-body elm))))))
+                :args (list (transform xform (js-parser::add-handler-handler elm))
+                            (transform xform (js-parser::make-function-expression
+                                              :body (js-parser::add-handler-thunk-body elm))))))
 
 (defmethod transform ((xform (eql 'remove-administratives)) (elm remove-handler))
   (make-fn-call :fn (make-identifier :name "$removeHandler")
-                :args (list (transform xform (jw::remove-handler-handler elm))
-                            (transform xform (jw::make-function-expression
-                                              :body (jw::remove-handler-thunk-body elm))))))
+                :args (list (transform xform (js-parser::remove-handler-handler elm))
+                            (transform xform (js-parser::make-function-expression
+                                              :body (js-parser::remove-handler-thunk-body elm))))))
 
 (defun test-transform (xform elm)
   "Return the results of applying XFORM to ELM with any administrative source-elements
@@ -100,11 +120,12 @@
 
 (defun compile-lang-tests (&key debug-mode)
   "Compile the language tests"
-  (let* ((jw::*debug-mode* debug-mode)
+  (let* ((js-parser::*debug-mode* debug-mode)
          (module (asdf:find-component (asdf:find-system :jwacs-tests) "tests"))
          (component (asdf:find-component module "lang-tests")))
-    (jw::build-app (asdf:component-pathname component))))
-    
+    (js-parser::build-app (asdf:component-pathname component))))
+
+#+nil
 (defun compile-examples (&key (compress-mode t) (combine-mode t))
   "Compiles all the examples"
   (let* ((sys-pathname (truename (asdf:system-definition-pathname (asdf:find-system :jwacs))))
@@ -115,7 +136,7 @@
                                                             :name :unspecific :type :unspecific :version :unspecific)
                                         sys-pathname)))
     (flet ((build-ex (name)
-             (jw:build-app (merge-pathnames name examples-pathname)
+             (js-parser:build-app (merge-pathnames name examples-pathname)
                            :prefix-lookup `(("/lib/" . ,lib-pathname))
                            :compress-mode compress-mode
                            :combine-mode combine-mode)))

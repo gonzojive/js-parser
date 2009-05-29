@@ -10,6 +10,7 @@
   (:use :cl :cl-ppcre)
   (:nicknames)
   (:export
+   ;; the main functions that we export
    #:parse
    #:process
    #:syntax-error
@@ -52,7 +53,7 @@
    #:function-decl
    #:function-expression
 
-   ;;
+   ;; source model slots
    #:array-literal-elements
    #:array-literal-end
    #:array-literal-label
