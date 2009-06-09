@@ -465,7 +465,7 @@
   (test-parse "x = function_continuation;")
   (#S(binary-operator :op-symbol :assign
                       :left-arg #S(identifier :name "x")
-                      :right-arg #S(special-value :symbol :function_continuation))))
+                      :right-arg #S(identifier :name "function_continuation"))))
 
 (deftest parser/for/1 :notes parser
   (test-parse "for(;;) suspend;")

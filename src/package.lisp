@@ -14,9 +14,13 @@
    #:parse
    #:process
    #:syntax-error
+
+   ;; misc.
+   #:*symbols-to-tokens*
    
    ;; source-model structure types
    #:source-element
+   #:expression
    #:special-value
    #:identifier
    #:numeric-literal
@@ -54,6 +58,12 @@
    #:function-expression
 
    ;; source model slots
+   #:expression
+   #:expression-end
+   #:expression-label
+   #:expression-p
+   #:expression-start
+
    #:array-literal-elements
    #:array-literal-end
    #:array-literal-label
@@ -310,4 +320,56 @@
    #:with-p
    #:with-scope-object
    #:with-start
+
+   ;; source element construction
+   #:make-source-element
+   #:make-special-value
+   #:make-identifier
+   #:make-numeric-literal
+   #:make-string-literal
+   #:make-array-literal
+   #:make-object-literal
+   #:make-re-literal
+   #:make-new-expr
+   #:make-fn-call
+   #:make-property-access
+   #:make-unary-operator
+   #:make-binary-operator
+   #:make-conditional
+   #:make-comma-expr
+   #:make-var-decl-statement
+   #:make-var-decl
+   #:make-statement-block
+   #:make-if-statement
+   #:make-do-statement
+   #:make-while
+   #:make-for
+   #:make-for-in
+   #:make-continue-statement
+   #:make-break-statement
+   #:make-return-statement
+   #:make-with
+   #:make-switch
+   #:make-case-clause
+   #:make-default-clause
+   #:make-throw-statement
+   #:make-try
+   #:make-catch-clause
+   #:make-finally-clause
+   #:make-function-decl
+   #:make-function-expression
+   #:make-suspend-statement
+   #:make-resume-statement
+   #:make-import-decl
+   #:make-add-handler
+   #:make-remove-handler
+   
+   ;; frequently-used accessors
+   #:source-element-start
+   #:source-element-end
+   
+   ;; structure management
+   #:get-constructor
+   #:structure-slots
+   #:make-keyword
    ))

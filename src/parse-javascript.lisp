@@ -198,13 +198,31 @@
   ((shift-expression-no-lbf shift-expression-no-lbf :urshift additive-expression) (make-binary-operator :op-symbol :urshift :left-arg $1 :right-arg $3 :start $s :end $e))
 
   ;; Pg 64
-  ((relational-expression shift-expression) $1)
-  ((relational-expression relational-expression :less-than shift-expression) (make-binary-operator :op-symbol :less-than :left-arg $1 :right-arg $3 :start $s :end $e))
-  ((relational-expression relational-expression :less-than-equals shift-expression) (make-binary-operator :op-symbol :less-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
-  ((relational-expression relational-expression :greater-than shift-expression) (make-binary-operator :op-symbol :greater-than :left-arg $1 :right-arg $3 :start $s :end $e))
-  ((relational-expression relational-expression :greater-than-equals shift-expression) (make-binary-operator :op-symbol :greater-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
-  ((relational-expression relational-expression :instanceof shift-expression) (make-binary-operator :op-symbol :instanceof :left-arg $1 :right-arg $3 :start $s :end $e))
-  ((relational-expression relational-expression :in shift-expression) (make-binary-operator :op-symbol :in :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression shift-expression) $1)
+;  ((relational-expression relational-expression :less-than shift-expression) (make-binary-operator :op-symbol :less-than :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression relational-expression :less-than-equals shift-expression) (make-binary-operator :op-symbol :less-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression relational-expression :greater-than shift-expression) (make-binary-operator :op-symbol :greater-than :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression relational-expression :greater-than-equals shift-expression) (make-binary-operator :op-symbol :greater-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression relational-expression :instanceof shift-expression) (make-binary-operator :op-symbol :instanceof :left-arg $1 :right-arg $3 :start $s :end $e))
+;  ((relational-expression relational-expression :in shift-expression) (make-binary-operator :op-symbol :in :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression relational-expression-no-in) $1)
+  ((relational-expression relational-expression-with-in ) $1)
+
+  ;; Pg 64
+  ((relational-expression-with-in relational-expression-maybe-in :in shift-expression) (make-binary-operator :op-symbol :in :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-with-in relational-expression-with-in :less-than shift-expression) (make-binary-operator :op-symbol :less-than :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-with-in relational-expression-with-in :less-than-equals shift-expression) (make-binary-operator :op-symbol :less-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-with-in relational-expression-with-in :greater-than shift-expression) (make-binary-operator :op-symbol :greater-than :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-with-in relational-expression-with-in :greater-than-equals shift-expression) (make-binary-operator :op-symbol :greater-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-with-in relational-expression-with-in :instanceof shift-expression) (make-binary-operator :op-symbol :instanceof :left-arg $1 :right-arg $3 :start $s :end $e))
+
+  ((relational-expression-maybe-in relational-expression-maybe-in :less-than shift-expression) (make-binary-operator :op-symbol :less-than :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-maybe-in relational-expression-maybe-in :less-than-equals shift-expression) (make-binary-operator :op-symbol :less-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-maybe-in relational-expression-maybe-in :greater-than shift-expression) (make-binary-operator :op-symbol :greater-than :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-maybe-in relational-expression-maybe-in :greater-than-equals shift-expression) (make-binary-operator :op-symbol :greater-than-equals :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-maybe-in relational-expression-maybe-in :instanceof shift-expression) (make-binary-operator :op-symbol :instanceof :left-arg $1 :right-arg $3 :start $s :end $e))
+  ((relational-expression-maybe-in relational-expression-maybe-in :in shift-expression) (make-binary-operator :op-symbol :in :left-arg $1 :right-arg $3 :start $s :end $e))
+  
 
   ((relational-expression-no-lbf shift-expression-no-lbf) $1)
   ((relational-expression-no-lbf relational-expression-no-lbf :less-than shift-expression) (make-binary-operator :op-symbol :less-than :left-arg $1 :right-arg $3 :start $s :end $e))

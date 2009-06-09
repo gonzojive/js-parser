@@ -23,8 +23,8 @@
                (:file "test-utils")
                (:file "test-lexer")
                (:file "test-parser")
-               (:file "test-pretty-print")
-               (:file "test-ugly-print")
+;               (:file "test-pretty-print")
+;               (:file "test-ugly-print")
 ;               (:file "test-static-analysis")
 ;               (:file "test-type-analysis")
 
@@ -36,7 +36,7 @@
 ;               (:file "test-loop-transformation")
 ;               (:file "test-trampoline-transformation")
 ;               (:file "test-runtime-transformation")
- ;              (:js-parser-file "lang-tests"))))
+;               (:js-parser-file "lang-tests"))))
 	       )))
     :depends-on (js-parser))
 

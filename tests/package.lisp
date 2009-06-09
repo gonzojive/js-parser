@@ -121,15 +121,15 @@
                 make-keyword
 
                 ;; pretty-printer-specific symbols
-                pretty-print
-                with-indent
-                *indent*
-                *escape-script-end-tags*
+                ;pretty-print
+                ;with-indent
+                ;*indent*
+                ;*escape-script-end-tags*
 
                 ;; ugly-printer symbols
-                genvar
-                *genvar-counter*
-                ugly-print
+                ;genvar
+                ;*genvar-counter*
+                ;ugly-print
 
                 ))
                 
