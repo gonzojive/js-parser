@@ -35,8 +35,8 @@
   :licence "MIT License <http://www.opensource.org/licenses/mit-license.php>"
   :serial t
   :components ((:module "external"
-                        :components
-                        ((:file "yacc")))
+			:components
+			((:file "jsyacc")))
 	       (:module
 		"src"
 		:serial t

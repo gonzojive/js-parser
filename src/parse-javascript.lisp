@@ -676,13 +676,13 @@
    Semicolon insertion is performed according to the ECMA-262 standard."
   (let ((lexer (make-instance 'javascript-lexer :text str)))
     (labels ((resignal (err)
-               (let ((pos (token-start (yacc:yacc-parse-error-value err))))
+               (let ((pos (token-start (jsyacc:yacc-parse-error-value err))))
                  (destructuring-bind (row . col) (position-to-line/column
                                                   str
                                                   pos)
                    (error (make-condition 'syntax-error
-                                          :token (yacc:yacc-parse-error-value err)
-                                          :expected-terminals (yacc:yacc-parse-error-expected-terminals err)
+                                          :token (jsyacc:yacc-parse-error-value err)
+                                          :expected-terminals (jsyacc:yacc-parse-error-expected-terminals err)
                                           :filename *current-filename* :pos pos :row row :column col)))))
              (handle-yacc-error (err)
                (cond
@@ -693,28 +693,28 @@
                  ;; just before the RE literal and instructing it to read the slash as
                  ;; just a slash.  We then instruct the parser to throw away the RE
                  ;; literal and continue parsing.
-                 ((and (eq :re-literal (yacc:yacc-parse-error-terminal err))
-                       (find :slash (yacc:yacc-parse-error-expected-terminals err)))
-                  (set-cursor lexer (token-start (yacc:yacc-parse-error-value err)))
+                 ((and (eq :re-literal (jsyacc:yacc-parse-error-terminal err))
+                       (find :slash (jsyacc:yacc-parse-error-expected-terminals err)))
+                  (set-cursor lexer (token-start (jsyacc:yacc-parse-error-value err)))
                   (coerce-token lexer :slash)
-                  (invoke-restart 'yacc:skip-terminal))
+                  (invoke-restart 'jsyacc:skip-terminal))
                  
                  ;; Don't try to perform semicolon insertion unless inserted-semicolons are permitted
-                 ((null (find :inserted-semicolon (yacc:yacc-parse-error-expected-terminals err)))
+                 ((null (find :inserted-semicolon (jsyacc:yacc-parse-error-expected-terminals err)))
                   (resignal err))
                    
                  ;; Semicolon-insertion case
                  ((or (encountered-line-terminator lexer)
-                      (eq :right-curly (yacc:yacc-parse-error-terminal err))
-                      (eq 'yacc:yacc-eof-symbol (yacc:yacc-parse-error-terminal err)))
-                  (invoke-restart 'yacc:insert-terminal :inserted-semicolon #s(token :terminal :inserted-semicolon
+                      (eq :right-curly (jsyacc:yacc-parse-error-terminal err))
+                      (eq 'jsyacc:yacc-eof-symbol (jsyacc:yacc-parse-error-terminal err)))
+                  (invoke-restart 'jsyacc:insert-terminal :inserted-semicolon #s(token :terminal :inserted-semicolon
                                                                                      :value ";")))
 
                  ;; Resignal as a js-parser error if we don't handle the yacc error
                  (t (resignal err)))))
                     
-      (handler-bind ((yacc:yacc-parse-error #'handle-yacc-error))
-        (yacc:parse-with-lexer (make-lexer-function lexer) javascript-script)))))
+      (handler-bind ((jsyacc:yacc-parse-error #'handle-yacc-error))
+        (jsyacc:parse-with-lexer (make-lexer-function lexer) javascript-script)))))
 
 (defun parse-file (path)
   "Load the file at PATH and parse it into a js/jw source model"

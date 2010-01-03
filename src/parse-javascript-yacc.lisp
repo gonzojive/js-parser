@@ -23,7 +23,7 @@
    for CL-YACC"
   (let* ((starting-point (first starting-production))
          (starting-symbol (first starting-point))
-         (header `(yacc:define-parser ,parser-name
+         (header `(jsyacc:define-parser ,parser-name
                    (:muffle-conflicts ,js-parser-system::*muffle-conflicts*)
 ;		   (:print-derives-epsilon t)
 ;		   (:print-first-terminals t)

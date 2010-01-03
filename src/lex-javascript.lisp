@@ -466,48 +466,75 @@
         (setf encountered-line-terminator
               (position-if 'line-terminator-p text :start ws-s :end ws-e))))))
 
-(defun consume-token (lexer)
+(defparameter *consume-token-goal* :regex-goal)
+
+(defun unescape-string-literal-value (value)
+  "Given the inside of a string literal with escaped characters like ', newlines, etc.
+returns a decoded value."
+  (ppcre:regex-replace-all "\\\\(.)" value
+			   #'(lambda (match char-str)
+			       (declare (ignore match))
+			       (case (elt char-str 0)
+				 (#\' "'")
+				 (#\" "'")
+				 (t (error "Unrecgonized escape character ~S" (elt char-str 0)))))
+			    :simple-calls t))
+
+(defun consume-token (lexer &optional (goal *consume-token-goal*))
   "Reads the next token from LEXER's source text (where 'next' is determined by
-   the value of LEXER's cursor).  The cursor is assumed to point to a non-whitespace
+   the value of LEXER's cursor).
+   
+   GOAL is either :regex-goal or :divide-goal, which corresponds to the description
+   of the 2 possible 'goal symbols' described in 7.0 of the ECMAScript spec.  If
+   GOAL is :re-input, a regular expression literal may be lexed.  Otherwise, regex
+   literals are parsed as divisions.
+
+   The cursor is assumed to point to a non-whitespace
    character on entry; on exit points to the first character after the consumed token.
-   Returns a token structure.  The token's terminal will be NIL on end of input"
+   Returns a token structure.  The token's terminal will be NIL on end of input."
   (with-slots (text cursor) lexer
-    (re-cond (text :start cursor)
-       ("^$"
-        (make-token :terminal nil :start (length text) :end (length text)))
-       (floating-re
-        (set-cursor lexer %e)
-        (make-token :terminal :number :start %s :end %e
-                    :value (read-from-string text nil nil :start %s :end %e)))
-       (integer-re
-        (set-cursor lexer %e)
-        (make-token :terminal :number :start %s :end %e
-                    :value (parse-javascript-integer text :start %s :end %e)))
-       ("^(\\$|\\w)+"
-        (set-cursor lexer %e)
-        (let* ((text (subseq text %s %e))
-               (terminal (or (gethash text *tokens-to-symbols*)
-                             :identifier)))
-          (make-token :terminal terminal :start %s :end %e :value text)))
-       (regexp-re
-        (set-cursor lexer %e)
-        (make-token :terminal :re-literal :start %s :end %e
-                    :value (cons (unescape-regexp (subseq text (aref %sub-s 0) (aref %sub-e 0)))
-                                 (subseq text (aref %sub-s 1) (aref %sub-e 1)))))
-       (string-re
-        (set-cursor lexer %e)
-        (make-token :terminal :string-literal :start %s :end %e
-                    :value (subseq text (1+ %s) (1- %e))))
-       (operator-re
-        (set-cursor lexer %e)
-        (let* ((text (subseq text %s %e))
-               (terminal (gethash text *tokens-to-symbols*)))
-          (make-token :terminal terminal :start %s :end %e
-                      :value text)))
-       ("^\\S+"
-        (error "unrecognized token: '~A'" (subseq text %s %e)))
-       (t
-        (error "coding error - we should never get here")))))
+    (or
+     (re-cond (text :start cursor)
+	      ("^$"
+	       (make-token :terminal nil :start (length text) :end (length text)))
+	      (floating-re
+	       (set-cursor lexer %e)
+	       (make-token :terminal :number :start %s :end %e
+			   :value (read-from-string text nil nil :start %s :end %e)))
+	      (integer-re
+	       (set-cursor lexer %e)
+	       (make-token :terminal :number :start %s :end %e
+			   :value (parse-javascript-integer text :start %s :end %e)))
+	      ("^(\\$|\\w)+"
+	       (set-cursor lexer %e)
+	       (let* ((text (subseq text %s %e))
+		      (terminal (or (gethash text *tokens-to-symbols*)
+				    :identifier)))
+		 (make-token :terminal terminal :start %s :end %e :value text)))
+	      (t nil))
+     (and (eql :regex-goal goal)
+	  (re-cond (text :start cursor)
+		   (regexp-re
+		    (set-cursor lexer %e)
+		    (make-token :terminal :re-literal :start %s :end %e
+				:value (cons (unescape-regexp (subseq text (aref %sub-s 0) (aref %sub-e 0)))
+					     (subseq text (aref %sub-s 1) (aref %sub-e 1)))))
+		   (t nil)))
+     (re-cond (text :start cursor)
+	      (string-re
+	       (set-cursor lexer %e)
+	       (make-token :terminal :string-literal :start %s :end %e
+			   :value (unescape-string-literal-value (subseq text (1+ %s) (1- %e)))))
+	      (operator-re
+	       (set-cursor lexer %e)
+	       (let* ((text (subseq text %s %e))
+		      (terminal (gethash text *tokens-to-symbols*)))
+		 (make-token :terminal terminal :start %s :end %e
+			     :value text)))
+	      ("^\\S+"
+	       (error "unrecognized token: '~A'" (subseq text %s %e)))
+	      (t
+	       (error "coding error - we should never get here"))))))
 
 ;; TODO Tab handling
 (defun position-to-line/column (text index)
