@@ -85,7 +85,7 @@
     (incf *genvar-counter*)
     (if (and *pretty-mode* orig-name)
       (format nil "~A$~D" orig-name old)
-      (format nil "JW~D" old))))
+      (format nil "a~D" old))))
 
 
 ;;; ==================================================

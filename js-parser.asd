@@ -18,7 +18,7 @@
   "The current version")
 
 ;;;; ======= Compilation configuration =============================================================
-(defparameter *muffle-conflicts* nil
+(defparameter *muffle-conflicts* t
   "When T, yacc warnings about Shift/Reduce and Reduce/Reduce conflicts will be muffled.
    When NIL, all such conflicts will be reported.
    When non-NIL, non-T, a single summary warning will be reported when conflicts exist.

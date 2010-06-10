@@ -477,6 +477,10 @@ returns a decoded value."
 			       (case (elt char-str 0)
 				 (#\' "'")
 				 (#\" "'")
+				 (#\\ "\\")
+                                 (#\t (make-string 1 :initial-element #\Tab))
+				 (#\n (make-string 1 :initial-element #\Newline))
+				 (#\C (make-string 1 :initial-element #\C))
 				 (t (error "Unrecgonized escape character ~S" (elt char-str 0)))))
 			    :simple-calls t))
 
